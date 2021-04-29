@@ -1,51 +1,39 @@
 # 本地网络接口
 # http://localhost:8110
-from flask import Flask,render_template
 import os
-from lichv.postgresqldb import PostgresqlDBService
 import decimal
+import json
+from flask import Flask,render_template
+from lichv.postgresqldb import PostgresqlDBService
+
+from aliyunsdkcore.client import AcsClient
+from aliyunsdkcore.acs_exception.exceptions import ClientException
+from aliyunsdkcore.acs_exception.exceptions import ServerException
+from aliyunsdksts.request.v20150401.AssumeRoleRequest import AssumeRoleRequest
+
 
 db = PostgresqlDBService.instance(host='localhost', port=5432, user='postgres', passwd='123456', db='data')
 
-def list2tree(items,steps,key='code',children='children'):
-	mapdata = {}
-	length = sum(steps)
-	count = len(steps)
-	for item in items:
-		temp = item
-		if len(item[key]) < length:
-			temp[children] = []
-		mapdata[item[key]] = item
-
-	for i in range(1,count):
-		current = sum(steps[0:count-i+1])
-		parent = sum(steps[0:count-i])
-
-		for item in items:
-			if len(item[key])== current:
-				mapdata[item[key][:parent]][children].append(item)
-	items = {}
-	for item in items:
-		if len(item[key]) == steps[0]:
-			items[item[key]] = mapdata[item[key]]
-	return items;
-		
-
-			
-	
 app = Flask(__name__)
+
+def getToken():
+	client = AcsClient('LTAI5tKnra54xozuA3KktFur', 'VyIHrtVQZxXeiuuBWUW2oG34qe87dk', 'cn-shanghai')
+	request = AssumeRoleRequest()
+	request.set_accept_format('json')
+	request.set_RoleArn("acs:ram::1378573870105843:role/osser")
+	request.set_RoleSessionName("osser")
+	response = client.do_action_with_exception(request)
+	result = json.loads(str(response, encoding='utf-8'))
+	return result
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
 	return {"state":2000,"msg":"success"}
 
-@app.route('/api/area', methods=['POST', 'GET'])
-def area():
-	items = {}
-	areas = set()
-	lu = db.getList('zone',{})
-	items = list2tree(lu,(2,2,2))
-	return {"state":2000,"data":items}
+@app.route('/api/sts/token', methods=['POST', 'GET'])
+def getSTSToken():
+	result = getToken()
+	return {"state":2000,"data":result}
 
 @app.route('/api/<path:table>', methods=['POST', 'GET'])
 def route(table='user'):
