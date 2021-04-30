@@ -17,7 +17,7 @@ db = PostgresqlDBService.instance(host='localhost', port=5432, user='postgres', 
 app = Flask(__name__)
 
 def getToken():
-	client = AcsClient('<AccessKeyID>', '<AccessKeyValue>', 'cn-shanghai')
+	client = AcsClient('LTAI5tKnra54xozuA3KktFur', 'VyIHrtVQZxXeiuuBWUW2oG34qe87dk', 'cn-shanghai')
 	request = AssumeRoleRequest()
 	request.set_accept_format('json')
 	request.set_RoleArn("acs:ram::1378573870105843:role/osser")
