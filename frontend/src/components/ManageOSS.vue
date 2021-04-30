@@ -74,9 +74,9 @@
 				if (result.state==2000) {
 					_this.client = new OSS({
 						region:_this.region,
-						accessKeyId: result.data.Credentials.AccessKeyId,
-						accessKeySecret: result.data.Credentials.AccessKeySecret,
-						stsToken: result.data.Credentials.SecurityToken,
+						accessKeyId: result.data.AccessKeyId,
+						accessKeySecret: result.data.AccessKeySecret,
+						stsToken: result.data.SecurityToken,
 						bucket:_this.bucket
 					})
 					_this.getOssFileList()

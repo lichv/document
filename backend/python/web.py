@@ -33,7 +33,7 @@ def index():
 @app.route('/api/aliyun/sts', methods=['POST', 'GET'])
 def getSTSToken():
 	result = getToken()
-	return {"state":2000,"data":result}
+	return {"state":2000,"data":result['Credentials']}
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8110)
