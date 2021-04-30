@@ -1,4 +1,3 @@
-import { md } from "./plugins/md";
 const path = require("path");
 // vite.config.js # or vite.config.ts
 console.log(path.resolve(__dirname, "./src"));
@@ -8,7 +7,6 @@ module.exports = {
     // 键必须以斜线开始和结束
     "/@/": path.resolve(__dirname, "./src"),
   },
-  plugins: [md()],
   /**
    * 在生产中服务时的基本公共路径。
    * @default '/'
@@ -19,7 +17,7 @@ module.exports = {
    * @default 'dist'
    */
   outDir: "dist",
-  port: 3000,
+  port: 8000,
   // 是否自动在浏览器打开
   open: true,
   // 是否开启 https
@@ -33,7 +31,7 @@ module.exports = {
   proxy: {
     // 如果是 /api 打头，则访问地址如下
     "/api": {
-      target: "https://baidu.com/",
+      target: "/",
       changeOrigin: true,
       rewrite: (path) => path.replace(/^\/api/, ""),
     },

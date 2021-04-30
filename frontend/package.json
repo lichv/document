@@ -6,6 +6,8 @@
     "build": "vite build"
   },
   "dependencies": {
+    "ali-oss": "^6.15.2",
+    "axios": "^0.21.1",
     "element-plus": "^1.0.2-beta.41",
     "github-markdown-css": "^4.0.0",
     "marked": "^2.0.3",

@@ -17,7 +17,7 @@ db = PostgresqlDBService.instance(host='localhost', port=5432, user='postgres', 
 app = Flask(__name__)
 
 def getToken():
-	client = AcsClient('LTAI5tKnra54xozuA3KktFur', 'VyIHrtVQZxXeiuuBWUW2oG34qe87dk', 'cn-shanghai')
+	client = AcsClient('<AccessKeyID>', '<AccessKeyValue>', 'cn-shanghai')
 	request = AssumeRoleRequest()
 	request.set_accept_format('json')
 	request.set_RoleArn("acs:ram::1378573870105843:role/osser")
@@ -30,21 +30,10 @@ def getToken():
 def index():
 	return {"state":2000,"msg":"success"}
 
-@app.route('/api/sts/token', methods=['POST', 'GET'])
+@app.route('/api/aliyun/sts', methods=['POST', 'GET'])
 def getSTSToken():
 	result = getToken()
 	return {"state":2000,"data":result}
-
-@app.route('/api/<path:table>', methods=['POST', 'GET'])
-def route(table='user'):
-	items = []
-	data = db.getList(table,{},'*',[('id',1)])
-	for item in data:
-		for ke in item:
-			if isinstance(item[ke], decimal.Decimal):
-				item[ke] = float(item[ke])
-		items.append(item)
-	return {"state":2000,"data":items}
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0",port=8110)
