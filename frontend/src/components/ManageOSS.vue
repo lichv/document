@@ -32,7 +32,6 @@
 </template>
 <script>
 	import api from '/@/api';
-	import AliOss from 'ali-oss';
 	export default {
 		name: 'ElManageOss',
 		props: {
@@ -72,13 +71,15 @@
 			.then(result => {
 				console.log(result)
 				if (result.state==2000) {
-					_this.client = new AliOss({
+					console.log('ok','here')
+					_this.client = new OSS({
 						region:_this.region,
 						accessKeyId: result.data.AccessKeyId,
 						accessKeySecret: result.data.AccessKeySecret,
 						stsToken: result.data.SecurityToken,
 						bucket:_this.bucket
 					})
+					console.log('this.client',_this.client)
 					_this.getOssFileList()
 				}
 			})
@@ -116,7 +117,7 @@
 						_this.$emit('uploadSuccess',res)
 						_this.getOssFileList()
 					}else {
-						console.log('failed')
+						console.log('failed',res)
 						options.onError("上传失败")
 					}
 				})

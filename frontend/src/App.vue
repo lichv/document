@@ -1,3 +1,5 @@
 <template>
-    <el-manage-oss></el-manage-oss>
+  <div id="app">
+    <router-view/>
+  </div>
 </template>

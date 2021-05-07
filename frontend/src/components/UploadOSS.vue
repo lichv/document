@@ -1,27 +1,25 @@
 <template>
-	<div class="UploadOSS">
-		<el-upload class="upload-alioss" action="" :show-file-list="false" :http-request="fnUploadRequest" :on-success="handleUploadSuccess" :before-upload="beforeAvatarUpload">
-			<el-button size="small" type="primary">点击上传</el-button>
-		</el-upload>
+	<div class="oss_file">
+		<input type="file" :id="id" :multiple="multiple" @change="doUpload"/>
 	</div>
 </template>
 <script>
 	import api from '/@/api';
-	import AliOss from 'ali-oss';
-	export default {
-		name: 'ElUploadOSS',
+	export default{
+		name: 'ElUploadOss',
+		data(){
+			return{
+				id:Math.random().toString(36).substr(2),
+			};
+		},
 		props: {
-			stsUrl: {
-				type: String,
-				default: "/api/aliyun/sts"
-			},
 			region: {
 				type: String,
 				default: "oss-cn-shanghai"
 			},
 			bucket: {
 				type: String,
-				default: "easytc"
+				default: "easyun"
 			},
 			rootname: {
 				type: String,
@@ -31,69 +29,46 @@
 				type: String,
 				default: "picture"
 			},
+			multiple:{
+				type: Boolean,
+				twoWay:false
+			},
 		},
-		data() {
-			return {
-				client:null,
-				imageUrl: '',
-			}
-		},
-		mounted() {
-			const _this = this;
-			api.getAliyunSTS.send()
-			.then(result => {
-				console.log(result)
-				if (result.state==2000) {
-					_this.client = new AliOss({
+		
+		methods:{
+			doUpload(){
+				const _this = this;
+				api.getAliyunSTS.send().then((result) => {
+					const client = new OSS({
 						region:_this.region,
 						accessKeyId: result.data.AccessKeyId,
 						accessKeySecret: result.data.AccessKeySecret,
 						stsToken: result.data.SecurityToken,
 						bucket:_this.bucket
 					})
-				}
-			})
-			.catch(e => {
-				console.log(e)
-			})
-		},
-		methods:{
-			handleUploadSuccess(res) {
-				if (res) this.imageUrl = res.url
-			},
-		beforeAvatarUpload(file) {
-			const isPicture = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' ;
-			const isLt20M = file.size / 1024 / 1024 < 20;
+					const files = document.getElementById(_this.id);
+					if(files.files){
+						const fileLen = document.getElementById(_this.id).files
+						const resultUpload = [];		
+						for (let i = 0; i < fileLen.length; i++) {
+							const file = fileLen[i];
+							const storeAs = file.name;
+							var reader = new window.FileReader()
+							reader.readAsArrayBuffer(file)
+							client.put(storeAs, file, {
 
-			if (!isPicture) {
-				this.$message.error('之恩呢上传JPEG,PNG,GIF格式图片!');
+							}).then((results) => {
+								if(results.url){
+									resultUpload.push(results.url);
+								}
+							}).catch((err) => {
+								console.log(err);
+							});
+						}
+						_this.url = resultUpload;
+					}   
+				});
 			}
-			if (!isLt20M) {
-				this.$message.error('上传头像图片大小不能超过 2MB!');
-			}
-			return isPicture && isLt20M;
-		},
-		async fnUploadRequest(options) {
-			try {
-				let file = options.file;
-				let fileNames = file.name
-				console.log('fileNames',fileNames)
-				this.client.put(this.rootname+'/'+this.dirname+'/'+fileNames, file).then(res=>{
-					if (res.res.statusCode === 200) {
-						console.log('success',res)
-						options.onSuccess(res)
-						this.$emit('uploadSuccess',res)
-					}else {
-						console.log('failed')
-						options.onError("上传失败")
-					}
-				})
-			}catch (e) {
-				console.log('error',e)
-				options.onError("上传失败")
-			}
-		},
-
-	},
-}
+		}
+	};
 </script>

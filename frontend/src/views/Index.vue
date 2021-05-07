@@ -1,5 +1,5 @@
 <template>
   <div>
-    <p>afsdf</p>
+    <el-upload-oss></el-upload-oss>
   </div>
 </template>

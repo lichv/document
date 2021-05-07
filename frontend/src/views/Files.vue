@@ -1,5 +1,5 @@
 <template>
   <div>
-    <el-upload-oss></el-upload-oss>
+    <el-manage-oss></el-manage-oss>
   </div>
 </template>
