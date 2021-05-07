@@ -31,8 +31,8 @@
 	</el-card>
 </template>
 <script>
-	import OSS from 'ali-oss'
-	import api from '/@/api'
+	import api from '/@/api';
+	import AliOss from 'ali-oss';
 	export default {
 		name: 'ElManageOss',
 		props: {
@@ -72,7 +72,7 @@
 			.then(result => {
 				console.log(result)
 				if (result.state==2000) {
-					_this.client = new OSS({
+					_this.client = new AliOss({
 						region:_this.region,
 						accessKeyId: result.data.AccessKeyId,
 						accessKeySecret: result.data.AccessKeySecret,
@@ -181,7 +181,6 @@
 	justify-content: space-between;
 	align-items: center;
 }
-
 .el-popover.el-popper{
 	padding: 4px;
 }

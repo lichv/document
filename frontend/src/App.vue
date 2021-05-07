@@ -1,3 +1,3 @@
 <template>
-    <el-markdown-display></el-markdown-display>
+    <el-manage-oss></el-manage-oss>
 </template>

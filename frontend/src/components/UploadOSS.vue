@@ -6,61 +6,61 @@
 	</div>
 </template>
 <script>
-import OSS from 'ali-oss'
-import api from '/@/api'
-export default {
-	name: 'ElManageOSS',
-	props: {
-		stsUrl: {
-			type: String,
-			default: "/api/aliyun/sts"
+	import api from '/@/api';
+	import AliOss from 'ali-oss';
+	export default {
+		name: 'ElUploadOSS',
+		props: {
+			stsUrl: {
+				type: String,
+				default: "/api/aliyun/sts"
+			},
+			region: {
+				type: String,
+				default: "oss-cn-shanghai"
+			},
+			bucket: {
+				type: String,
+				default: "easytc"
+			},
+			rootname: {
+				type: String,
+				default: "aegicare"
+			},
+			dirname: {
+				type: String,
+				default: "picture"
+			},
 		},
-		region: {
-			type: String,
-			default: "oss-cn-shanghai"
-		},
-		bucket: {
-			type: String,
-			default: "easytc"
-		},
-		rootname: {
-			type: String,
-			default: "aegicare"
-		},
-		dirname: {
-			type: String,
-			default: "picture"
-		},
-	},
-	data() {
-		return {
-			client:null,
-			imageUrl: '',
-		}
-	},
-	mounted() {
-		const _this = this;
-		api.getAliyunSTS.send()
-		.then(result => {
-			console.log(result)
-			if (result.state==2000) {
-				_this.client = new OSS({
-					region:_this.region,
-					accessKeyId: result.data.AccessKeyId,
-					accessKeySecret: result.data.AccessKeySecret,
-					stsToken: result.data.SecurityToken,
-					bucket:_this.bucket
-				})
+		data() {
+			return {
+				client:null,
+				imageUrl: '',
 			}
-		})
-		.catch(e => {
-			console.log(e)
-		})
-	},
-	methods:{
-		handleUploadSuccess(res) {
-			if (res) this.imageUrl = res.url
 		},
+		mounted() {
+			const _this = this;
+			api.getAliyunSTS.send()
+			.then(result => {
+				console.log(result)
+				if (result.state==2000) {
+					_this.client = new AliOss({
+						region:_this.region,
+						accessKeyId: result.data.AccessKeyId,
+						accessKeySecret: result.data.AccessKeySecret,
+						stsToken: result.data.SecurityToken,
+						bucket:_this.bucket
+					})
+				}
+			})
+			.catch(e => {
+				console.log(e)
+			})
+		},
+		methods:{
+			handleUploadSuccess(res) {
+				if (res) this.imageUrl = res.url
+			},
 		beforeAvatarUpload(file) {
 			const isPicture = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/gif' ;
 			const isLt20M = file.size / 1024 / 1024 < 20;

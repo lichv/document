@@ -1,17 +1,4 @@
-<style>
-	.markdown-display{
-		height: 100%;
-		width: 100%;
-		padding: 0;
-		margin: 0;
-	}
-	.markdown-header{
-		height: 50px;
-	}
-	.markdown-content{
-		height: calc(100% - 50px);
-	}
-</style>
+
 <template>
 	<div class="markdown-display">
 		<div class="markdown-header">
@@ -28,7 +15,6 @@
 	</div>
 </template>
 <script>
-
 	export default {
 		name: 'ElMarkdownDisplay',
 		props: {
@@ -68,3 +54,17 @@
 		},
 	}
 </script>
+<style>
+.markdown-display{
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+.markdown-header{
+	height: 50px;
+}
+.markdown-content{
+	height: calc(100% - 50px);
+}
+</style>
