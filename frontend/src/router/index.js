@@ -11,6 +11,10 @@ const router = createRouter({
         path: '/test',
         component: () => import('/@/views/Files.vue'),
     },
+    {
+        path: '/item/:pathMatch(.*)*',
+        component: () => import('/@/views/Index.vue'),
+    },
 
 
     ]

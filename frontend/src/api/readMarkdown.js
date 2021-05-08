@@ -6,7 +6,7 @@ readMarkdown.send = function(data) {
     return request({
         url: `/api/markdown/read`,
         data,
-        method: 'GET'
+        method: 'POST'
     })
 }
 

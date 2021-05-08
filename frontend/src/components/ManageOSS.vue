@@ -9,7 +9,6 @@
 			</div>
 		</template>
 		<el-table :data="fileList" style="width: 100%">
-			<el-table-column prop="name" sortable label="文件名" width="240"> </el-table-column>
 			<el-table-column prop="url" label="预览" width="180">
 				<template #default="scope">
 					<el-popover placement="top-start" :title="scope.row.name" :width="360" trigger="hover" >

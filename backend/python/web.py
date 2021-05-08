@@ -36,9 +36,10 @@ def getFiles(source='.', extends='.md'):
 		for parent, dirnames, filenames in os.walk(source, topdown=False,	followlinks=True):
 			for filename in filenames:
 				if filename.lower().endswith(extends) :
-					name = filename[:filename.index(extends)]
-					dirname = parent[len(source):]
-					items.append({'filename':name,'dirname':dirname,'path':os.path.join( parent,filename )})
+					filepath = os.path.join( parent,filename )
+					filename = filepath[len(source):]
+					filename = filename.replace('\\','/')
+					items.append({'filename':filename})
 	return items
 
 @app.route('/', methods=['POST', 'GET'])
@@ -68,7 +69,11 @@ def getMarkdownDetail():
 			path = request.form.get('path')
 		else:
 			path = request.values.get("path")
-	print(path)
+	print("第一次："+path)
+	path = ".\\docs\\"+path
+	print("第二次："+path)
+	if os.path.isdir(path):
+		path = os.path.join( path,'index.md' )
 	if os.path.exists( path ):
 		text = read(path)
 	else:
