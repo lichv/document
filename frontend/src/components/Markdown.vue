@@ -16,7 +16,7 @@
 </template>
 <script>
 	export default {
-		name: 'ElMarkdownDisplay',
+		name: 'ElMarkdown',
 		props: {
 			stsUrl: {
 				type: String,

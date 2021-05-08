@@ -1,5 +1,3 @@
 <template>
-  <div>
-    <el-upload-oss></el-upload-oss>
-  </div>
+    <el-markdown-display></el-markdown-display>
 </template>

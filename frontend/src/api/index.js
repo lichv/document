@@ -1,7 +1,11 @@
 import getAliyunSTS from './getAliyunSTS'
+import getMarkdownFiles from './getMarkdownFiles'
+import readMarkdown from './readMarkdown'
 
 let api = {
-    getAliyunSTS
+    getAliyunSTS,
+    getMarkdownFiles,
+    readMarkdown
 }
 
 export default api
