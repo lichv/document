@@ -17,7 +17,7 @@
 				<div v-html="html" class="markdown-body"></div>
 			</div>
 		</div>
-		<el-drawer title="我是标题" v-model="drawer" :direction="direction" destroy-on-close size="60%">
+		<el-drawer v-model="drawer" :direction="direction" size="60%">
 			<el-manage-oss></el-manage-oss>
 		</el-drawer>
 	</div>
@@ -142,7 +142,7 @@
 	display: flex;
 }
 .markdown-side{
-	width: 240px;
+	width: 320px;
 	height: 100%;
 	overflow-y: scroll;
 	background-color: #fff;
