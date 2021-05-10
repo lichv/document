@@ -68,9 +68,7 @@
 			const _this = this;
 			api.getAliyunSTS.send()
 			.then(result => {
-				console.log(result)
 				if (result.state==2000) {
-					console.log('ok','here')
 					_this.client = new OSS({
 						region:_this.region,
 						accessKeyId: result.data.AccessKeyId,
@@ -78,7 +76,6 @@
 						stsToken: result.data.SecurityToken,
 						bucket:_this.bucket
 					})
-					console.log('this.client',_this.client)
 					_this.getOssFileList()
 				}
 			})
@@ -108,15 +105,12 @@
 				let file = options.file;
 				let date = new Date().getTime()
 				let fileNames = `${date}_${file.name}`
-				console.log('fileNames',fileNames)
 				this.client.put(this.rootname+'/'+this.dirname+'/'+fileNames, file).then(res=>{
 					if (res.res.statusCode === 200) {
-						console.log('success',res)
 						options.onSuccess(res)
 						_this.$emit('uploadSuccess',res)
 						_this.getOssFileList()
 					}else {
-						console.log('failed',res)
 						options.onError("上传失败")
 					}
 				})
@@ -136,7 +130,6 @@
 						'max-keys': _this.maxKeys
 					});
 					_this.marker = result.nextMarker;
-					console.log(result);
 					if (result.res.statusCode==200) {
 						if (result.objects) {
 							for (var i = result.objects.length - 1; i >= 0; i--) {

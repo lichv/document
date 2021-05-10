@@ -7,13 +7,22 @@ import (
 	"fmt"
 	"github.com/aliyun/alibaba-cloud-sdk-go/services/sts"
 	"github.com/gin-gonic/gin"
+	"github.com/thinkerou/favicon"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"os"
+	"path"
+	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 	"unsafe"
 )
 
+type ReadFileForm struct {
+	Filepath  string `json:"filepath" form:"filepath"`
+}
 
 func main() {
 	var outport int
@@ -21,10 +30,12 @@ func main() {
 	flag.Parse()
 
 	engine := gin.Default()
+	engine.Use(favicon.New("./public/favicon.ico"))
+	engine.Static("/_assets", "./public/_assets")
+	engine.LoadHTMLFiles("public/index.html")
 	engine.GET("/", func(c *gin.Context) {
-		c.JSON(200,gin.H{
-			"state":2000,
-			"message":"success",
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"title": "Main website",
 		})
 	})
 	engine.Any("/api/aliyun/sts", func(c *gin.Context) {
@@ -66,6 +77,69 @@ func main() {
 			"data":*result,
 			"message":"success",
 		})
+	})
+
+	engine.Any("/api/markdown/files", func(context *gin.Context) {
+		dirName := "./docs"
+		items := GetALLFIles_walk(dirName)
+		result := []map[string]interface{}{}
+		for _,item := range items {
+			s := item[len(dirName)-1:]
+			tmp := map[string]interface{}{}
+			tmp["filename"] = strings.Replace(s,"\\","/",-1)
+			result = append(result, tmp)
+		}
+
+		
+		context.JSON(200,gin.H{
+			"state":2000,
+			"message":"success",
+			"data":result,
+		})
+	})
+
+	engine.Any("/api/markdown/read", func(context *gin.Context) {
+		var readfile ReadFileForm
+		context.Bind(&readfile)
+		fmt.Println(readfile.Filepath)
+		//fmt.Println(context)
+		filepath := readfile.Filepath
+		if filepath == ""{
+			filepath = context.DefaultPostForm("path","")
+		}
+		//filepath = context.DefaultPostForm("path","")
+		fmt.Println("filepath",filepath)
+		if filepath == "" {
+			filepath = context.DefaultQuery("path","")
+		}
+
+		fmt.Println("filepath",filepath)
+		filepath = path.Join(".","docs",filepath)
+		fmt.Println("filepath",filepath)
+		if IsDir(filepath) {
+			filepath = path.Join(filepath,"index.md")
+		}
+		fmt.Println("filepath",filepath)
+		if IsExist(filepath){
+			bs,err := os.ReadFile(filepath)
+			if err != nil {
+				context.JSON(404,gin.H{
+					"state":4000,
+					"message":"failed",
+				})
+				return
+			}
+			context.JSON(200,gin.H{
+				"state":2000,
+				"message":"success",
+				"data":string(bs),
+			})
+		}else{
+			context.JSON(404,gin.H{
+				"state":4000,
+				"message":"failed",
+			})
+		}
 	})
 
 	outportStr := strconv.Itoa(outport)
@@ -118,4 +192,70 @@ func Send(account,password,sign,mobile,content string) (*string,error) {
 	}
 	str := (*string)(unsafe.Pointer(&respBytes))
 	return str,nil
+}
+
+func IsDir(path string) bool {
+	s, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return s.IsDir()
+}
+
+func IsExist(f string) bool {
+	_, err := os.Stat(f)
+	return err == nil || os.IsExist(err)
+}
+
+func GetAllFile(pathname string, s []string) ([]string, error) {
+	fromSlash := filepath.FromSlash(pathname)
+	//fmt.Println(fromSlash)
+	rd, err := ioutil.ReadDir(fromSlash)
+	if err != nil {
+		//log.LOGGER("Error").Error("read dir fail %v\n", err)
+		fmt.Println("read dir fail:", err)
+		return s, err
+	}
+	for _, fi := range rd {
+		if fi.IsDir() {
+			fullDir:= filepath.Join(fromSlash,fi.Name())
+			s, err = GetAllFile(fullDir, s)
+			if err != nil {
+				fmt.Println("read dir fail:", err)
+				//log.LOGGER("Error").Error("read dir fail: %v\n", err)
+				return s, err
+			}
+		} else {
+			fullName:= filepath.Join(fromSlash,fi.Name())
+			s = append(s, fullName)
+		}
+	}
+	return s, nil
+}
+
+func GetALLFIles_walk(pathname string)([]string){
+	StartTime :=time.Now();
+	dst_target :=[]string{}
+	err := filepath.Walk(pathname, func(src string, f os.FileInfo, err error) error {
+		if f == nil {
+			return err
+		}
+		if f.IsDir(){
+			return nil
+		}else { //进行文件的复制
+			dst_target=append(dst_target,src)
+
+			//return s
+		}
+		//println(path)
+		return nil
+	})
+
+	if err != nil {
+		fmt.Printf("filepath.Walk() returned %v\n", err)
+		return nil
+		//log.LOGGER("Error").Error("filepath.Walk() returned %v\n", err)
+	}
+	fmt.Println("Cost Time:",time.Since(StartTime))
+	return dst_target
 }

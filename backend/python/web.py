@@ -3,7 +3,7 @@
 import os
 import decimal
 import json
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,send_from_directory
 from lichv.utils import * 
 from lichv.postgresqldb import PostgresqlDBService
 
@@ -15,7 +15,8 @@ from aliyunsdksts.request.v20150401.AssumeRoleRequest import AssumeRoleRequest
 
 db = PostgresqlDBService.instance(host='localhost', port=5432, user='postgres', passwd='123456', db='data')
 
-app = Flask(__name__,template_folder=os.getcwd()+"../../../frontend/dist/",static_folder=os.getcwd()+"../../../frontend/dist/_assets")
+# app = Flask(__name__,template_folder=os.getcwd()+"../../../frontend/dist/",static_folder=os.getcwd()+"../../../frontend/dist/_assets")
+app = Flask(__name__,template_folder=os.path.join(os.getcwd(),"public/"),static_folder=os.path.join(os.getcwd(),"public/_assets"))
 
 def getToken():
 	client = AcsClient('LTAI5tKnra54xozuA3KktFur', 'VyIHrtVQZxXeiuuBWUW2oG34qe87dk', 'cn-shanghai')
@@ -46,6 +47,11 @@ def getFiles(source='.', extends='.md'):
 def index():
 	return render_template('index.html')
 	# return {"state":2000,"msg":"success"}
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'public'),
+                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 @app.route('/api/aliyun/sts', methods=['POST', 'GET'])
 def getSTSToken():

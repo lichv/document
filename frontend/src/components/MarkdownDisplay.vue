@@ -76,10 +76,6 @@
 			this.$watch(
 				() => this.$route.params,
 				(toParams, previousParams) => {
-
-					console.log('toParams',toParams)
-					console.log('previousParams',previousParams)
-					console.log('this.$route.params.pathMatch',_this.$route.params.pathMatch)
 					_this.readFile()
 				}
 				)
@@ -89,7 +85,6 @@
 				let _this = this;
 				api.getMarkdownFiles.send()
 				.then(result => {
-					console.log('result',result)
 					if (result.state==2000) {
 						_this.items = result.data
 					}
@@ -101,12 +96,10 @@
 			readFile:function(){
 				let _this = this;
 				var pathMatch = this.$route.params.pathMatch
-				console.log('pathMatch',pathMatch)
 				if (typeof(pathMatch)!="undefined") {
 					var path = pathMatch.join('/')
-					api.readMarkdown.send({"path":path})
+					api.readMarkdown.send({"filepath":path})
 					.then(result => {
-						console.log('result',result)
 						if (result.state==2000) {
 							_this.html = marked(result.data)
 						}
