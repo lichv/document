@@ -11,7 +11,7 @@
 		<el-table :data="fileList" style="width: 100%">
 			<el-table-column prop="url" label="预览" width="180">
 				<template #default="scope">
-					<el-popover placement="top-start" :title="scope.row.name" :width="360" trigger="hover" >
+					<el-popover placement="top-start" :title="scope.row.name" :width="'auto'" trigger="hover" >
 						<template #reference>
 							<img  v-if="scope.row.url" shape="square" :src="scope.row.url" style="max-height: 48px;">
 						</template>
@@ -173,6 +173,8 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	margin-right: 50px;
+    height: 50px;
 }
 .el-popover.el-popper{
 	padding: 4px;

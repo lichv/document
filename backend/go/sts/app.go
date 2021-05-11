@@ -16,6 +16,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"testing"
 	"time"
 	"unsafe"
 )
@@ -26,13 +27,30 @@ type ReadFileForm struct {
 
 func main() {
 	var outport int
+	var docs_path string
+	var public_path string
 	flag.IntVar(&outport,"o",7654,"输出端口号")
-	flag.Parse()
+	flag.StringVar(&docs_path,"d","./docs/","文档目录")
+	flag.StringVar(&public_path,"s","./public/","前端目录")
+
+	testing.Init()
+	if !flag.Parsed() {
+		flag.Parse()
+	}
+
+	if !IsExist(docs_path) {
+		fmt.Println("文档目录不存在")
+		return
+	}
+	if !IsExist(public_path) {
+		fmt.Println("静态文件目录不存在")
+		return
+	}
 
 	engine := gin.Default()
-	engine.Use(favicon.New("./public/favicon.ico"))
-	engine.Static("/_assets", "./public/_assets")
-	engine.LoadHTMLFiles("public/index.html")
+	engine.Use(favicon.New(path.Join(public_path,"favicon.ico")))
+	engine.Static("/_assets", path.Join(public_path,"/_assets"))
+	engine.LoadHTMLFiles(path.Join(public_path,"/index.html"))
 	engine.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title": "Main website",
@@ -80,11 +98,11 @@ func main() {
 	})
 
 	engine.Any("/api/markdown/files", func(context *gin.Context) {
-		dirName := "./docs"
+		dirName := docs_path
 		items := GetALLFIles_walk(dirName)
 		result := []map[string]interface{}{}
 		for _,item := range items {
-			s := item[len(dirName)-1:]
+			s := item[len(dirName)-2:]
 			tmp := map[string]interface{}{}
 			tmp["filename"] = strings.Replace(s,"\\","/",-1)
 			result = append(result, tmp)
@@ -101,25 +119,17 @@ func main() {
 	engine.Any("/api/markdown/read", func(context *gin.Context) {
 		var readfile ReadFileForm
 		context.Bind(&readfile)
-		fmt.Println(readfile.Filepath)
-		//fmt.Println(context)
 		filepath := readfile.Filepath
 		if filepath == ""{
 			filepath = context.DefaultPostForm("path","")
 		}
-		//filepath = context.DefaultPostForm("path","")
-		fmt.Println("filepath",filepath)
 		if filepath == "" {
 			filepath = context.DefaultQuery("path","")
 		}
-
-		fmt.Println("filepath",filepath)
-		filepath = path.Join(".","docs",filepath)
-		fmt.Println("filepath",filepath)
+		filepath = path.Join(docs_path,filepath)
 		if IsDir(filepath) {
 			filepath = path.Join(filepath,"index.md")
 		}
-		fmt.Println("filepath",filepath)
 		if IsExist(filepath){
 			bs,err := os.ReadFile(filepath)
 			if err != nil {
@@ -209,10 +219,8 @@ func IsExist(f string) bool {
 
 func GetAllFile(pathname string, s []string) ([]string, error) {
 	fromSlash := filepath.FromSlash(pathname)
-	//fmt.Println(fromSlash)
 	rd, err := ioutil.ReadDir(fromSlash)
 	if err != nil {
-		//log.LOGGER("Error").Error("read dir fail %v\n", err)
 		fmt.Println("read dir fail:", err)
 		return s, err
 	}

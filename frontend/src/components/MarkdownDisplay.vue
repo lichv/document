@@ -13,11 +13,11 @@
 					
 				</el-menu>
 			</div>
-			<div class="markdown-main">
+			<div class="markdown-main" id="write">
 				<div v-html="html" class="markdown-body"></div>
 			</div>
 		</div>
-		<el-drawer v-model="drawer" :direction="direction" size="60%">
+		<el-drawer v-model="drawer" :direction="direction" size="60%" :append-to-body="true">
 			<el-manage-oss></el-manage-oss>
 		</el-drawer>
 	</div>
