@@ -8,15 +8,10 @@ const router = createRouter({
         component: () => import('/@/views/Index.vue'),
     },
     {
-        path: '/test',
-        component: () => import('/@/views/Files.vue'),
-    },
-    {
         path: '/item/:pathMatch(.*)*',
+        name: 'readMarkdown',
         component: () => import('/@/views/Index.vue'),
     },
-
-
     ]
 })
 

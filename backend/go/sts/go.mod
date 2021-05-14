@@ -3,13 +3,14 @@ module sts/v1
 go 1.16
 
 require (
-	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1059 // indirect
+	github.com/aliyun/alibaba-cloud-sdk-go v1.61.1089 // indirect
 	github.com/gin-gonic/gin v1.7.1 // indirect
 	github.com/go-playground/validator/v10 v10.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/lichv/go v0.0.0-20210514133514-bdfdddbe60df // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/thinkerou/favicon v0.1.0 // indirect
