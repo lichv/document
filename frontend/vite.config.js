@@ -11,13 +11,14 @@ module.exports = {
    * 在生产中服务时的基本公共路径。
    * @default '/'
    */
-  base: "./",
+   base: "./",
   /**
    * 与“根”相关的目录，构建输出将放在其中。如果目录存在，它将在构建之前被删除。
    * @default 'dist'
    */
-  outDir: "dist",
-  port: 8000,
+   outDir: "dist",
+   assetsDir:"static",
+   port: 8000,
   // 是否自动在浏览器打开
   open: true,
   // 是否开启 https
